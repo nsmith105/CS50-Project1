@@ -10,11 +10,17 @@
     <p id="Welcome">
         Welcome to the Internet's premier book reviewing website!
     </p>
-    <form action="" method="POST">
-        <p>Let's get you setup with an account!</p> 
-        <input name="newUser" type="text" placeholder="Username">
-        <input name="newPass" type="password" placeholder="Password">
-        <button>Create</button>
+    <form action="{{ url_for('create') }}" method="POST">
+        <p>Let's get you signed up!</p>
+        <div class="form-group">
+            <input class="form-control" name="newUser" placeholder="Username" type="text">
+        </div>
+        <div class="form-group">
+            <input class="form-control" name="newPass" placeholder="Password" type="password">
+        </div>
+        <div class="form-group">
+            <button class="btn btn-primary">Create</button>
+        </div>
     </form>
     <img src="https://images.freeimages.com/images/large-previews/007/books-1419617.jpg" alt="books"
          style="max-width: 70%; padding-top: 10px;">

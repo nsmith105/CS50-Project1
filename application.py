@@ -1,6 +1,6 @@
 import os
 
-from flask import Flask, session, render_template
+from flask import Flask, session, render_template, request
 from flask_session import Session
 from sqlalchemy import create_engine
 from sqlalchemy.orm import scoped_session, sessionmaker
@@ -23,9 +23,22 @@ db = scoped_session(sessionmaker(bind=engine))
 
 @app.route("/")
 def index():
-    return render_template("index.html", methods=["GET"])
+    return render_template("index.html")
 
-@app.route("/success")
+@app.route("/create", methods=["POST", "GET"])
+def create():
+    newUsername = request.form.get("newUser")
+    newPassword = request.form.get("newPass")
+    db.execute("INSERT INTO users (username, password) VALUES (:username, :password)",
+                {"username": newUsername, "password": newPassword})
+    db.commit()
+    return render_template("success.html")
+
+@app.route("/login")
+def login():
+    return render_template("login.html")
+
+@app.route("/success", methods=["POST"])
 def success():
     return render_template("success.html")
 
@@ -33,7 +46,5 @@ def success():
 def main():
     return render_template("main.html")
 
-@app.route("/login")
-def login():
-    return render_template("login.html", methods=["GET", "POST"])
+
 
