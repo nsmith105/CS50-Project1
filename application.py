@@ -23,7 +23,7 @@ db = scoped_session(sessionmaker(bind=engine))
 
 @app.route("/")
 def index():
-    return render_template("index.html")
+    return render_template("index.html", methods=["GET"])
 
 @app.route("/success")
 def success():
@@ -33,7 +33,7 @@ def success():
 def main():
     return render_template("main.html")
 
-@app.route("/userlogin")
-def userLogin():
-    return render_template("userlogin.html")
+@app.route("/login")
+def login():
+    return render_template("login.html", methods=["GET", "POST"])
 
