@@ -1,4 +1,5 @@
 import os
+import re
 
 from flask import Flask, session, render_template, request
 from flask_session import Session
@@ -27,16 +28,39 @@ def index():
 
 @app.route("/create", methods=["POST", "GET"])
 def create():
+    # Get user input from login page
     newUsername = request.form.get("newUser")
     newPassword = request.form.get("newPass")
-    db.execute("INSERT INTO users (username, password) VALUES (:username, :password)",
+
+    # Check if user name exists
+    if (db.execute("SELECT username FROM users WHERE username = :username", {"username": newUsername}).rowcount == 1):
+        return render_template("error.html", message="Username already exists")
+
+    # Check for little Bobby Drop Tables
+    if re.search("[']", newPassword):
+        return render_template("error.html", message="Invalid Password")
+
+    #Insert into database - the password is stored in the data base encrypted for security
+    db.execute("INSERT INTO users (username, password) VALUES (:username, crypt(:password, gen_salt('bf')))",
                 {"username": newUsername, "password": newPassword})
     db.commit()
+    
     return render_template("success.html")
 
 @app.route("/login")
 def login():
     return render_template("login.html")
+
+@app.route("/verify", methods=["POST", "GET"])
+def verify():
+    user = request.form.get("existingUser")
+    xpass = request.form.get("existingPass")
+
+    #check for user in user table
+    if db.execute("SELECT id FROM users WHERE username = :username AND password = crypt(:password, password);", {"username": user, "password": xpass}).rowcount == 1:
+        return render_template("error.html", message="Invalid username/password")
+    else:
+        return render_template("main.html")
 
 @app.route("/success", methods=["POST"])
 def success():
