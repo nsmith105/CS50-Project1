@@ -1,0 +1,15 @@
+{% extends "layout.html" %}
+
+{% block title %}
+    Main
+{% endblock %}
+
+{% block body %}
+<form action="{{ url_for('search') }}" method="GET">
+    <h1>Search for a book to review!</h1>
+    <br>
+    <input name="bookInfo" type="text" placeholder="Title / Author / ISBN">
+    <button>Search</button>
+</form>
+
+{% endblock %}

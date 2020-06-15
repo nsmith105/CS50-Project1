@@ -1,7 +1,7 @@
 import os
 import re
 
-from flask import Flask, session, render_template, request
+from flask import Flask, session, render_template, request, redirect
 from flask_session import Session
 from sqlalchemy import create_engine
 from sqlalchemy.orm import scoped_session, sessionmaker
@@ -20,7 +20,6 @@ Session(app)
 # Set up database
 engine = create_engine(os.getenv("DATABASE_URL"))
 db = scoped_session(sessionmaker(bind=engine))
-
 
 @app.route("/")
 def index():
@@ -41,6 +40,7 @@ def create():
         return render_template("error.html", message="Invalid Password")
 
     #Insert into database - the password is stored in the data base encrypted for security
+    db.begin()
     db.execute("INSERT INTO users (username, password) VALUES (:username, crypt(:password, gen_salt('bf')))",
                 {"username": newUsername, "password": newPassword})
     db.commit()
@@ -68,7 +68,11 @@ def success():
 
 @app.route("/main")
 def main():
-    return render_template("main.html")
+    return render_template("search.html")
+
+@app.route("/search", methods=["GET"])
+def search():
+    return render_template("search.html")
 
 
 
