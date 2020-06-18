@@ -1,7 +1,7 @@
 import os
 import re
 
-from flask import Flask, session, render_template, request, redirect
+from flask import Flask, session, render_template, request, redirect, jsonify
 from flask_session import Session
 from sqlalchemy import create_engine
 from sqlalchemy.orm import scoped_session, sessionmaker
@@ -64,15 +64,32 @@ def verify():
 
 @app.route("/success", methods=["POST"])
 def success():
+    ### User name successfully added to DB ###
     return render_template("success.html")
 
 @app.route("/main")
 def main():
-    return render_template("search.html")
+    ### Main landing page ###
+    return render_template("main.html")
 
-@app.route("/search", methods=["GET"])
-def search():
-    return render_template("search.html")
+@app.route("/results", methods=["GET", "POST"])
+def results():
+    ### Search results pages ###
+    results = request.form.get("searchinfo")
+    results = '%' + results + '%'
+
+    if db.execute("SELECT * FROM books WHERE isbn LIKE :result OR lower(author) LIKE lower(:result) OR lower(title) LIKE lower(:result);", {"result": results}).rowcount == 0:
+        return render_template ("error.html", message="Your search returned no results, please try agian!")
+    bookinfo = db.execute("SELECT * FROM books WHERE isbn LIKE :result OR lower(author) LIKE lower(:result) OR lower(title) LIKE lower(:result);", {"result": results}).fetchall()
+    return render_template("results.html", bookinfo=bookinfo)
+
+@app.route("/allbooks")
+def allbooks():
+    allbooks = db.execute("SELECT * FROM books").fetchall()
+    return render_template("allbooks.html", allbooks=allbooks)
+
+
+    
 
 
 

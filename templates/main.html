@@ -5,10 +5,10 @@
 {% endblock %}
 
 {% block body %}
-<form action="{{ url_for('search') }}" method="GET">
+<form action="{{ url_for('results') }}" method="post">
     <h1>Search for a book to review!</h1>
     <br>
-    <input name="bookInfo" type="text" placeholder="Title / Author / ISBN">
+    <input name="searchinfo" type="text" placeholder="Title / Author / ISBN">
     <button>Search</button>
 </form>
 
