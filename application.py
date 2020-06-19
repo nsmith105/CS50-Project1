@@ -1,5 +1,4 @@
-import os
-import re
+import os, re, models
 
 from flask import Flask, session, render_template, request, redirect, jsonify
 from flask_session import Session
@@ -83,11 +82,14 @@ def results():
     bookinfo = db.execute("SELECT * FROM books WHERE isbn LIKE :result OR lower(author) LIKE lower(:result) OR lower(title) LIKE lower(:result);", {"result": results}).fetchall()
     return render_template("results.html", bookinfo=bookinfo)
 
-@app.route("/allbooks")
-def allbooks():
+@app.route("/books")
+def books():
     allbooks = db.execute("SELECT * FROM books").fetchall()
-    return render_template("allbooks.html", allbooks=allbooks)
+    return render_template("books.html", allbooks=allbooks)
 
+@app.route("/books/<varchar:isbn>")
+def book_api(isbn):
+    
 
     
 

@@ -10,6 +10,10 @@
         </style>
     </head>
     <body>
+        <div class="navbar">
+            {% block navbar %}
+            {% endblock %}
+        </div>
         <div class="container" style="display:inline-flexbox; margin: auto; width: 50%; margin-top: 10%; text-align: center;">
             {% block body %}
             {% endblock %}
