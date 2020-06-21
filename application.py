@@ -1,6 +1,7 @@
-import os, re, models
+import os, re
+from models import *
 
-from flask import Flask, session, render_template, request, redirect, jsonify
+from flask import session, render_template, request, redirect, jsonify
 from flask_session import Session
 from sqlalchemy import create_engine
 from sqlalchemy.orm import scoped_session, sessionmaker
@@ -39,7 +40,6 @@ def create():
         return render_template("error.html", message="Invalid Password")
 
     #Insert into database - the password is stored in the data base encrypted for security
-    db.begin()
     db.execute("INSERT INTO users (username, password) VALUES (:username, crypt(:password, gen_salt('bf')))",
                 {"username": newUsername, "password": newPassword})
     db.commit()
@@ -87,11 +87,27 @@ def books():
     allbooks = db.execute("SELECT * FROM books").fetchall()
     return render_template("books.html", allbooks=allbooks)
 
-@app.route("/books/<varchar:isbn>")
+
+@app.route("/books/<string:isbn>")
+def book(isbn):
+    book = db.execute("SELECT * FROM books WHERE isbn = :book_isbn", {"book_isbn": isbn} ).fetchone()
+    if book is None:
+        return render_template("error.html", message="That book is not in our database")
+    
+    return render_template("book.html", book=book)
+
+@app.route("/api/books/<string:isbn>", methods=["GET"])
 def book_api(isbn):
-    
-
-    
-
+    book_info = requests.get("https://www.goodreads.com/book/review_counts.json", params={"key": DCM6bTHII2EmK8RWecMPWA, "isbn": isbn})
+    if book_info is None:
+        return jsonify({"error": "Invalid flight_id"}), 422
+    return jsonify({
+            "title": book_info.title,
+            "author": book_info.author,
+            "year": book_info.year,
+            "isbn": book_info.isbn,
+            "reviews": book_info.review_count,
+            "average score": book_info.average_score
+        })
 
 

@@ -6,13 +6,11 @@
 
 {% block body %}
 <h1>
-    {{ book.title}}
+    {{ book.title }}
 </h1>
 <ul>
-    {% for books in allbooks %}
-        <li>
-            {{ books.isbn }} - {{ books.author }} - {{ books.title }} - {{ books.date }}
-        </li>
-    {% endfor %}
+    <li>Author: {{ book.author }}</li>
+    <li>Year Published: {{ book.date }}</li>
+    <li>ISBN: {{ book.isbn }}</li>
 </ul>
 {% endblock %}
