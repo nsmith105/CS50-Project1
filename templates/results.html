@@ -11,7 +11,7 @@
     <ul>
         {% for books in bookinfo %}
             <li>
-                {{ books.isbn }} - {{ books.author }} - <a href="{{ url_for('book', isbn=books.isbn) }}">{{ books.title }}</a> - {{ books.date }}
+                {{ books.author }} - <a href="{{ url_for('book', isbn=books.isbn) }}">{{ books.title }}</a>
             </li>
         {% endfor %}
     </ul>
